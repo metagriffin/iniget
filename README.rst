@@ -2,8 +2,8 @@
 iniget
 ======
 
-A command-line tool to extract values from an iniherit-enabled "INI"
-file.
+A command-line tool to extract, normalize, and JSONify values from an
+iniherit-enabled "INI" file.
 
 
 Installation
@@ -27,7 +27,7 @@ Usage
   [DEFAULT]
   %inherit = base.ini
 
-  $ iniget config.ini foo
+  $ iniget config.ini sect1 foo
   bar
 
 
