@@ -51,7 +51,7 @@ classifiers = [
 setup(
   name                  = 'iniget',
   version               = '0.2.0',
-  description           = 'A command-line tool to extract values from an iniherit-enabled "INI" file.',
+  description           = 'A command-line tool to extract, normalize, and JSONify values from an iniherit-enabled "INI" file.',
   long_description      = read('README.rst'),
   classifiers           = classifiers,
   author                = 'metagriffin',
