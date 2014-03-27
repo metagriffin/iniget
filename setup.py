@@ -20,7 +20,7 @@
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #------------------------------------------------------------------------------
 
-import os, sys, re, setuptools
+import os, sys, setuptools
 from setuptools import setup, find_packages
 
 # require python 2.7+
@@ -28,27 +28,27 @@ if sys.hexversion < 0x02070000:
   raise RuntimeError('This package requires python 2.7 or better')
 
 heredir = os.path.abspath(os.path.dirname(__file__))
-def read(*parts):
+def read(*parts, **kw):
   try:    return open(os.path.join(heredir, *parts)).read()
-  except: return ''
+  except: return kw.get('default', '')
 
 test_dependencies = [
   'nose                 >= 1.3.0',
-  'coverage             >= 3.6',
-  ]
+  'coverage             >= 3.5.3',
+]
 
 dependencies = [
   'distribute           >= 0.6.24',
   'argparse             >= 1.2.1',
   'iniherit             >= 0.1.6',
   'six                  >= 1.4.1',
-  ]
+]
 
 entrypoints = {
   'console_scripts': [
     'iniget             = iniget.cli:main',
-    ],
-  }
+  ],
+}
 
 classifiers = [
   'Development Status :: 4 - Beta',
@@ -59,16 +59,16 @@ classifiers = [
   'Environment :: Console',
   'Topic :: Utilities',
   'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
-  ]
+]
 
 setup(
   name                  = 'iniget',
-  version               = '0.2.0',
+  version               = read('VERSION.txt', default='0.0.1').strip(),
   description           = 'A command-line tool to extract, normalize, and JSONify values from an iniherit-enabled "INI" file.',
   long_description      = read('README.rst'),
   classifiers           = classifiers,
   author                = 'metagriffin',
-  author_email          = 'metagriffin@uberdev.org',
+  author_email          = 'mg.pypi@metagriffin.net',
   url                   = 'http://github.com/metagriffin/iniget',
   keywords              = 'ini configuration value extract inherit',
   packages              = find_packages(),
@@ -80,7 +80,7 @@ setup(
   test_suite            = 'iniget',
   entry_points          = entrypoints,
   license               = 'GPLv3+',
-  )
+)
 
 #------------------------------------------------------------------------------
 # end of $Id$
