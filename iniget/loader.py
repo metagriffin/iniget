@@ -61,7 +61,12 @@ class Loader(object):
     ini  = getattr(mod, attr)(defaults=self.defaults)
     ini.optionxform = str if self.case else str.lower
     ini.readfp(fp)
-    ret = Config(((DEFAULT_SECTION, ini.defaults()),))
+    def getopt(sect, opt):
+      return ini.get(sect, opt)
+    ret = Config()
+    ret[DEFAULT_SECTION] = Section()
+    for opt in ini.defaults().keys():
+      ret[DEFAULT_SECTION][opt] = getopt(DEFAULT_SECTION, opt)
     for section in sorted(ini.sections(), key=sectkey):
       ret[section] = Section(ini.items(section))
     if self.jsonify is False:

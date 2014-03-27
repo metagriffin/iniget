@@ -77,6 +77,13 @@ class TestIniget(unittest.TestCase):
     self.assertEqual(out, chk)
 
   #----------------------------------------------------------------------------
+  def test_evaluates_default_section(self):
+    ini = '[DEFAULT]\na = b\nc = %(a)s\n'
+    out = {'DEFAULT': {'a': 'b', 'c': 'b'}}
+    chk = loader.loads(ini)
+    self.assertEqual(out, chk)
+
+  #----------------------------------------------------------------------------
   def test_loads_nointerpolate(self):
     ini = '[DEFAULT]\na = b\n[sect1]\nc = no-such-%(here)s-data\n'
     chk = {'DEFAULT': {'a': 'b'}, 'sect1': {'a': 'b', 'c': 'no-such-%(here)s-data'}}
