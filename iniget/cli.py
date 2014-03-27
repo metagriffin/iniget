@@ -54,6 +54,11 @@ def main(argv=None):
     help=_('disable ConfigParser option expansion ("interpolation")'))
 
   cli.add_argument(
+    _('-F'), _('--no-fallback'),
+    dest='fallback', action='store_false', default=True,
+    help=_('disable falling back to non-interpolated option expansion'))
+
+  cli.add_argument(
     _('-K'), _('--list-options'),
     dest='list_keys', action='store_true', default=False,
     help=_('list the option names only, not the values'))
@@ -151,6 +156,7 @@ def main(argv=None):
     options.config,
     inherit=options.inherit, case_sensitive=options.case,
     interpolate=options.interpolate, defaults=options.defaults,
+    fallback=options.fallback,
     jsonify=options.json_parse)
 
   try:

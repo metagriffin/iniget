@@ -65,7 +65,7 @@ class TestIniget(unittest.TestCase):
   def test_loads_defaultsMissing(self):
     ini = '[DEFAULT]\na = b\n[sect1]\nc = no-such-%(here)s-data\n'
     with self.assertRaises(loader.configparser.InterpolationMissingOptionError) as cm:
-      out = loader.loads(ini)
+      out = loader.loads(ini, fallback=False)
     self.assertEqual(cm.exception.reference, 'here')
 
   #----------------------------------------------------------------------------
@@ -79,8 +79,15 @@ class TestIniget(unittest.TestCase):
   #----------------------------------------------------------------------------
   def test_evaluates_default_section(self):
     ini = '[DEFAULT]\na = b\nc = %(a)s\n'
-    out = {'DEFAULT': {'a': 'b', 'c': 'b'}}
-    chk = loader.loads(ini)
+    chk = {'DEFAULT': {'a': 'b', 'c': 'b'}}
+    out = loader.loads(ini)
+    self.assertEqual(out, chk)
+
+  #----------------------------------------------------------------------------
+  def test_bad_interpolation_value(self):
+    ini = '[logger]\ndatefmt = %Y-%m-%d\n'
+    chk = {'DEFAULT': {}, 'logger': {'datefmt': '%Y-%m-%d'}}
+    out = loader.loads(ini)
     self.assertEqual(out, chk)
 
   #----------------------------------------------------------------------------
@@ -212,7 +219,7 @@ class TestIniget(unittest.TestCase):
     out = six.StringIO()
     dumper.dump(ini, out)
     chk = 'true\n'
-    self.assertEqual(out.getvalue(), chk)
+    self.assertMultiLineEqual(out.getvalue(), chk)
 
   #----------------------------------------------------------------------------
   def test_dumps(self):
@@ -220,7 +227,7 @@ class TestIniget(unittest.TestCase):
     ini = sifter.sift(ini, sections='sect1', keys='c')
     out = dumper.dumps(ini)
     chk = 'true\n'
-    self.assertEqual(out, chk)
+    self.assertMultiLineEqual(out, chk)
 
   #----------------------------------------------------------------------------
   def test_dumps_listSects(self):
@@ -228,7 +235,7 @@ class TestIniget(unittest.TestCase):
     ini = sifter.sift(ini, list_sections=True)
     out = dumper.dumps(ini)
     chk = 'DEFAULT\nsect1\nsect2\n'
-    self.assertEqual(out, chk)
+    self.assertMultiLineEqual(out, chk)
 
   #----------------------------------------------------------------------------
   def test_dumps_listSectsJson(self):
@@ -236,7 +243,7 @@ class TestIniget(unittest.TestCase):
     ini = sifter.sift(ini, list_sections=True)
     out = dumper.dumps(ini, jsonify=True)
     chk = '["DEFAULT", "sect1", "sect2"]\n'
-    self.assertEqual(out, chk)
+    self.assertMultiLineEqual(out, chk)
 
   #----------------------------------------------------------------------------
   def test_dumps_listKeys(self):
@@ -244,7 +251,7 @@ class TestIniget(unittest.TestCase):
     ini = sifter.sift(ini, list_keys=True)
     out = dumper.dumps(ini)
     chk = '[DEFAULT]\na\n[sect1]\na\nc\n[sect2]\na\nc\ne\n'
-    self.assertEqual(out, chk)
+    self.assertMultiLineEqual(out, chk)
 
   #----------------------------------------------------------------------------
   def test_dumps_listKeysJson(self):
@@ -252,7 +259,7 @@ class TestIniget(unittest.TestCase):
     ini = sifter.sift(ini, list_keys=True)
     out = dumper.dumps(ini, jsonify=True)
     chk = '{"DEFAULT": ["a"], "sect1": ["a", "c"], "sect2": ["a", "c", "e"]}\n'
-    self.assertEqual(out, chk)
+    self.assertMultiLineEqual(out, chk)
 
   #----------------------------------------------------------------------------
   def test_dumps_listKeysJson_ordering(self):
@@ -260,23 +267,23 @@ class TestIniget(unittest.TestCase):
     ini = sifter.sift(ini, list_keys=True)
     out = dumper.dumps(ini, jsonify=True)
     chk = '{"DEFAULT": ["a"], "sect1": ["a", "c"], "sect2": ["a", "c", "e"]}\n'
-    self.assertEqual(out, chk)
+    self.assertMultiLineEqual(out, chk)
 
   #----------------------------------------------------------------------------
   def test_dumps_section(self):
-    ini = loader.loads('[DEFAULT]\na = b\n[sect1]\nc = true\nd = foo\n')
+    ini = loader.loads('[DEFAULT]\na = b\n[sect1]\nd = foo\nc = true\n')
     ini = sifter.sift(ini, sections='sect1')
     out = dumper.dumps(ini)
-    chk = 'a = b\nc = true\nd = foo\n'
-    self.assertEqual(out, chk)
+    chk = 'd = foo\nc = true\na = b\n'
+    self.assertMultiLineEqual(out, chk)
 
   #----------------------------------------------------------------------------
   def test_dumps_sectionJson(self):
     ini = loader.loads('[DEFAULT]\na = b\n[sect1]\nc = true\nd = foo\n')
     ini = sifter.sift(ini, sections='sect1')
     out = dumper.dumps(ini, jsonify=True)
-    chk = '{"a": "b", "c": true, "d": "foo"}\n'
-    self.assertEqual(out, chk)
+    chk = '{"c": true, "d": "foo", "a": "b"}\n'
+    self.assertMultiLineEqual(out, chk)
 
   #----------------------------------------------------------------------------
   def test_dumps_value(self):
@@ -284,7 +291,7 @@ class TestIniget(unittest.TestCase):
     ini = sifter.sift(ini, sections='sect2', keys='c')
     out = dumper.dumps(ini)
     chk = 'true2\n'
-    self.assertEqual(out, chk)
+    self.assertMultiLineEqual(out, chk)
 
   #----------------------------------------------------------------------------
   def test_dumps_valueJson(self):
@@ -292,7 +299,7 @@ class TestIniget(unittest.TestCase):
     ini = sifter.sift(ini, sections='sect2', keys='c')
     out = dumper.dumps(ini, jsonify=True)
     chk = '"true2"\n'
-    self.assertEqual(out, chk)
+    self.assertMultiLineEqual(out, chk)
 
 
 #------------------------------------------------------------------------------

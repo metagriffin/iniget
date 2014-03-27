@@ -46,29 +46,41 @@ class Loader(object):
 
   #----------------------------------------------------------------------------
   def __init__(self, inherit=True, case_sensitive=True,
-               defaults=None, interpolate=True,
+               defaults=None, interpolate=True, fallback=True,
                jsonify=True):
     self.inherit      = inherit
     self.case         = case_sensitive
     self.defaults     = defaults
     self.interpolate  = interpolate
     self.jsonify      = jsonify
+    self.fallback     = fallback
 
   #----------------------------------------------------------------------------
   def loadfp(self, fp):
+    data = fp.read()
     attr = 'SafeConfigParser' if self.interpolate else 'RawConfigParser'
     mod  = iniherit if self.inherit else configparser
     ini  = getattr(mod, attr)(defaults=self.defaults)
+    inir = getattr(mod, 'RawConfigParser')(defaults=self.defaults)
     ini.optionxform = str if self.case else str.lower
-    ini.readfp(fp)
+    inir.optionxform = str if self.case else str.lower
+    ini.readfp(six.StringIO(data))
+    inir.readfp(six.StringIO(data))
     def getopt(sect, opt):
-      return ini.get(sect, opt)
+      try:
+        return ini.get(sect, opt)
+      except Exception:
+        if not self.interpolate or not self.fallback:
+          raise
+        return inir.get(sect, opt)
     ret = Config()
     ret[DEFAULT_SECTION] = Section()
     for opt in ini.defaults().keys():
       ret[DEFAULT_SECTION][opt] = getopt(DEFAULT_SECTION, opt)
     for section in sorted(ini.sections(), key=sectkey):
-      ret[section] = Section(ini.items(section))
+      ret[section] = Section()
+      for opt in ini.options(section):
+        ret[section][opt] = getopt(section, opt)
     if self.jsonify is False:
       return ret
     jret = Config()
