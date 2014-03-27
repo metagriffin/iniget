@@ -20,7 +20,7 @@
 #------------------------------------------------------------------------------
 
 import six
-from .loader import DEFAULT_SECTION, configparser, Config, Section, isstr, sectcmp
+from .loader import DEFAULT_SECTION, configparser, Config, Section, isstr, sectkey
 
 #------------------------------------------------------------------------------
 def sift(data,
@@ -28,7 +28,7 @@ def sift(data,
          sections=None, keys=None):
 
   if list_sections:
-    return sorted(data.keys(), cmp=sectcmp)
+    return sorted(data.keys(), key=sectkey)
 
   if list_keys:
     if isstr(sections):
@@ -38,7 +38,7 @@ def sift(data,
         raise configparser.NoSectionError(section=sections)
     try:
       ret = Config()
-      for section in sorted(sections or data.keys(), cmp=sectcmp):
+      for section in sorted(sections or data.keys(), key=sectkey):
         ret[section] = sorted(data[section].keys())
       return ret
     except KeyError as err:
@@ -64,7 +64,7 @@ def sift(data,
       raise configparser.NoOptionError(section=sections, option=keys)
 
   ret = Config()
-  for sectname in sorted(sections or data.keys(), cmp=sectcmp):
+  for sectname in sorted(sections or data.keys(), key=sectkey):
     if sectname not in data:
       raise configparser.NoSectionError(section=sectname)
     section = data[sectname]

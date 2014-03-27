@@ -33,14 +33,10 @@ class Config(collections.OrderedDict): pass
 class Section(collections.OrderedDict): pass
 
 #------------------------------------------------------------------------------
-def sectcmp(a, b):
-  if a == b:
-    return 0
-  if a == DEFAULT_SECTION:
-    return -1
-  if b == DEFAULT_SECTION:
-    return 1
-  return cmp(a, b)
+def sectkey(sect):
+  if sect == DEFAULT_SECTION:
+    return -100
+  return sect
 
 truthy = frozenset(('true', 'yes', 'on'))
 falsy  = frozenset(('false', 'no', 'off'))
@@ -66,7 +62,7 @@ class Loader(object):
     ini.optionxform = str if self.case else str.lower
     ini.readfp(fp)
     ret = Config(((DEFAULT_SECTION, ini.defaults()),))
-    for section in sorted(ini.sections(), cmp=sectcmp):
+    for section in sorted(ini.sections(), key=sectkey):
       ret[section] = Section(ini.items(section))
     if self.jsonify is False:
       return ret

@@ -20,7 +20,7 @@
 #------------------------------------------------------------------------------
 
 import six, json
-from .loader import configparser, Config, Section, isstr, sectcmp
+from .loader import configparser, Config, Section, isstr
 
 list_types = (list, tuple, set)
 
