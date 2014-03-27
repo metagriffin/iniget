@@ -1,6 +1,2 @@
-test:
-	nosetests --verbose
-
-upload:
-	python setup.py sdist upload
-
+PKGNAME = iniget
+include Makefile.python
