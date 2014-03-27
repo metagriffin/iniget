@@ -68,6 +68,13 @@ Options
 
   Disable ConfigParser option expansion ("interpolation").
 
+* ``-F, --no-fallback``
+
+  Disables falling back to the raw option value when an option value
+  cannot be interpolated (this generally happens when it is
+  incorrectly formatted or it references undefined substitutions),
+  and causes an exception to be thrown.
+
 * ``-K, --list-options``
 
   List the option names only, not the values.
