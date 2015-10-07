@@ -38,9 +38,8 @@ test_dependencies = [
 ]
 
 dependencies = [
-  'distribute           >= 0.6.24',
   'argparse             >= 1.2.1',
-  'iniherit             >= 0.1.6',
+  'iniherit             >= 0.3.4',
   'six                  >= 1.4.1',
 ]
 
