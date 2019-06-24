@@ -40,7 +40,7 @@ test_dependencies = [
 dependencies = [
   'argparse             >= 1.2.1',
   'iniherit             >= 0.3.4',
-  'six                  >= 1.4.1',
+  'six                  >= 1.10.0',
 ]
 
 entrypoints = {
