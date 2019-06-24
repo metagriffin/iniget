@@ -19,7 +19,12 @@
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #------------------------------------------------------------------------------
 
-import unittest, six
+import unittest
+import os
+import textwrap
+
+import six
+import fso
 
 from . import loader, sifter, dumper
 
@@ -300,6 +305,39 @@ class TestIniget(unittest.TestCase):
     out = dumper.dumps(ini, jsonify=True)
     chk = '"true2"\n'
     self.assertMultiLineEqual(out, chk)
+
+  #----------------------------------------------------------------------------
+  def test_nodirchange_relative_iniherit(self):
+    with fso.push() as overlay:
+      with open('base.ini', 'wb') as fp:
+        fp.write(textwrap.dedent('''\
+          [DEFAULT]
+          alpha = beta
+        '''))
+      with open('config.ini', 'wb') as fp:
+        fp.write(textwrap.dedent('''\
+          [DEFAULT]
+          %inherit = base.ini
+        '''))
+      result = loader.load('config.ini')
+      self.assertEqual(result.get('DEFAULT').get('alpha'), 'beta')
+
+  #----------------------------------------------------------------------------
+  def test_dirchange_relative_iniherit(self):
+    with fso.push() as overlay:
+      os.makedirs('.nosuchdir/configs')
+      with open('.nosuchdir/configs/base.ini', 'wb') as fp:
+        fp.write(textwrap.dedent('''\
+          [DEFAULT]
+          alpha = beta
+        '''))
+      with open('.nosuchdir/configs/config.ini', 'wb') as fp:
+        fp.write(textwrap.dedent('''\
+          [DEFAULT]
+          %inherit = base.ini
+        '''))
+      result = loader.load('.nosuchdir/configs/config.ini')
+      self.assertEqual(result.get('DEFAULT').get('alpha'), 'beta')
 
 
 #------------------------------------------------------------------------------
