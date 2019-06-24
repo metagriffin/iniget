@@ -114,20 +114,28 @@ class Loader(object):
 default = Loader()
 
 #------------------------------------------------------------------------------
-def load(fp, loader=None, *args, **kw):
+def loadfp(fp, loader=None, *args, **kws):
   if loader is None:
-    if args or kw:
-      loader = Loader(*args, **kw)
+    if args or kws:
+      loader = Loader(*args, **kws)
     else:
       loader = default
-  if isstr(fp):
-    with open(fp, 'rb') as fp:
-      return load(fp, loader=loader)
   return loader.loadfp(fp)
 
 #------------------------------------------------------------------------------
-def loads(data, *args, **kw):
-  return load(six.StringIO(data), *args, **kw)
+def loads(data, *args, **kws):
+  return loadfp(six.StringIO(data), *args, **kws)
+
+#------------------------------------------------------------------------------
+def load(filename, *args, **kws):
+  if not isstr(filename):
+    return loadfp(filename, *args, **kws)
+  # todo: *** hack alert *** this **SHOULD** just call `Loader` with a
+  #       `filename` parameter... but this is the easiest way to make
+  #       the `test.py:test_dirchange_relative_iniherit` scenario work...
+  # todo: escape `filename`...
+  data = '[DEFAULT]\n%inherit = ' + filename
+  return loads(data, *args, **kws)
 
 #------------------------------------------------------------------------------
 # end of $Id$
