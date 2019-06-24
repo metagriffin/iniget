@@ -154,10 +154,11 @@ def main(argv=None):
 
   result = loader.load(
     options.config,
-    inherit=options.inherit, case_sensitive=options.case,
-    interpolate=options.interpolate, defaults=options.defaults,
-    fallback=options.fallback,
-    jsonify=options.json_parse)
+    inherit     = options.inherit, case_sensitive=options.case,
+    interpolate = options.interpolate, defaults=options.defaults,
+    fallback    = options.fallback,
+    jsonify     = options.json_parse,
+  )
 
   try:
     if options.raw:
@@ -188,4 +189,5 @@ def main(argv=None):
 
 #------------------------------------------------------------------------------
 # end of $Id$
+# $ChangeLog$
 #------------------------------------------------------------------------------

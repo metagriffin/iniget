@@ -19,8 +19,14 @@
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #------------------------------------------------------------------------------
 
-import six, json, iniherit, collections
+import collections
+import json
+
+import six
+import iniherit
 from six.moves import configparser
+
+#------------------------------------------------------------------------------
 
 DEFAULT_SECTION = configparser.DEFAULTSECT
 
@@ -125,4 +131,5 @@ def loads(data, *args, **kw):
 
 #------------------------------------------------------------------------------
 # end of $Id$
+# $ChangeLog$
 #------------------------------------------------------------------------------
